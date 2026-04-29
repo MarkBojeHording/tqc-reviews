@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Participant Feedback — The Quiet Collective</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #606043;
+    --olive: #ACAD78;
+    --dust: #F7F6F0;
+    --sand: #E9E1D3;
+    --wine: #6B2B33;
+    --ink: #2C2B24;
+    --muted: #888878;
+    --line: #DDD8CE;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dust);
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  .page-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 32px 100px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+
+  .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 18px;
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(26px, 5vw, 40px);
+    line-height: 1.2;
+    color: var(--forest);
+    margin-bottom: 6px;
+  }
+
+  .header h1 em { font-style: italic; }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-top: 10px;
+  }
+
+  .header-rule {
+    width: 48px;
+    height: 1px;
+    background: var(--olive);
+    margin: 22px auto 0;
+  }
+
+  /* Section blocks */
+  .form-section {
+    margin-bottom: 44px;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .form-section.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .section-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--olive);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Field groups */
+  .field-group {
+    margin-bottom: 24px;
+  }
+
+  .field-group label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .field-group label span {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 11px 14px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  textarea:focus,
+  select:focus { border-color: var(--forest); }
+
+  input.error,
+  textarea.error,
+  select.error { border-color: var(--wine); }
+
+  textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.7;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888878' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    cursor: pointer;
+    padding-right: 36px;
+  }
+
+  /* Star rating */
+  .star-group {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .star-group input[type="radio"] { display: none; }
+
+  .star-group label {
+    font-size: 28px;
+    color: var(--line);
+    cursor: pointer;
+    transition: color 0.15s, transform 0.15s;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+  }
+
+  .star-group label:hover,
+  .star-group label:hover ~ label,
+  .star-group input[type="radio"]:checked ~ label {
+    color: var(--line);
+  }
+
+  .star-group input[type="radio"]:checked + label,
+  .star-group label:hover {
+    color: var(--olive);
+  }
+
+  /* Reverse star trick */
+  .star-group {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+
+  .star-group label:hover,
+  .star-group label:hover ~ label {
+    color: var(--olive);
+  }
+
+  .star-group input[type="radio"]:checked ~ label,
+  .star-group input[type="radio"]:checked + label {
+    color: var(--olive);
+  }
+
+  /* Radio / checkbox pills */
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .pill-group input[type="radio"],
+  .pill-group input[type="checkbox"] { display: none; }
+
+  .pill-group label {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    background: #fff;
+    font-size: 13px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .pill-group input[type="radio"]:checked + label,
+  .pill-group input[type="checkbox"]:checked + label {
+    border-color: var(--forest);
+    background: var(--forest);
+    color: var(--dust);
+  }
+
+  .pill-group label:hover {
+    border-color: var(--olive);
+    color: var(--forest);
+  }
+
+  /* Field error */
+  .field-error {
+    font-size: 11px;
+    color: var(--wine);
+    margin-top: 5px;
+    display: none;
+  }
+  .field-error.show { display: block; }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--line);
+    margin: 40px 0;
+  }
+
+  /* Submit */
+  .submit-wrap { text-align: center; margin-top: 48px; }
+
+  .submit-btn {
+    display: inline-block;
+    background: var(--forest);
+    color: var(--dust);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 16px 52px;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.15s;
+    min-width: 220px;
+  }
+
+  .submit-btn:hover { background: #4e4e35; }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { background: var(--muted); cursor: not-allowed; }
+
+  /* Success */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+  }
+  .success-screen.show { display: block; }
+
+  .success-mark {
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--olive);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    font-size: 22px;
+    color: var(--olive);
+  }
+
+  .success-screen h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 32px;
+    color: var(--forest);
+    margin-bottom: 12px;
+  }
+
+  .success-screen p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  .tripadvisor-btn {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 14px 36px;
+    border: 1px solid var(--olive);
+    background: transparent;
+    color: var(--forest);
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .tripadvisor-btn:hover {
+    background: var(--forest);
+    color: var(--dust);
+  }
+
+  .tripadvisor-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  .form-wrap.hidden { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(247,246,240,0.3);
+    border-top-color: var(--dust);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @media (max-width: 520px) {
+    .page-wrap { padding: 40px 20px 80px; }
+    .pill-group label { font-size: 12px; padding: 7px 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header class="header">
+    <div class="wordmark">The Quiet Collective</div>
+    <h1>Participant <em>Feedback</em></h1>
+    <div class="header-sub">From Script to Pitch</div>
+    <div class="header-rule"></div>
+  </header>
+
+  <div class="form-wrap" id="formWrap">
+
+    <!-- 1. General Information -->
+    <div class="form-section" id="sec1">
+      <div class="section-label">1 — General Information</div>
+
+      <div class="field-group">
+        <label for="participantName">Your Name</label>
+        <input type="text" id="participantName" placeholder="Full name" autocomplete="name">
+        <div class="field-error" id="nameErr">Please enter your name.</div>
+      </div>
+
+      <div class="field-group">
+        <label for="retreat">Retreat
+          <span>Which retreat did you attend?</span>
+        </label>
+        <select id="retreat">
+          <option value="" disabled selected>Select your retreat…</option>
+          <option value="From Script to Pitch — May 24–31, 2026">From Script to Pitch — May 24–31, 2026</option>
+          <option value="Embodying the Character — May 3–10, 2026">Embodying the Character — May 3–10, 2026</option>
+          <option value="Awakening the Authentic Self — June 21–28, 2026">Awakening the Authentic Self — June 21–28, 2026</option>
+          <option value="From Script to Pitch — September 13–20, 2026">From Script to Pitch — September 13–20, 2026</option>
+          <option value="The Creative Path — Sep 28–Oct 4, 2026">The Creative Path — Sep 28–Oct 4, 2026</option>
+          <option value="Unshakeable — October 18–25, 2026">Unshakeable — October 18–25, 2026</option>
+        </select>
+        <div class="field-error" id="retreatErr">Please select your retreat.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 2. Overall Experience -->
+    <div class="form-section" id="sec2">
+      <div class="section-label">2 — Overall Experience</div>
+
+      <div class="field-group">
+        <label>How would you rate your overall experience?</label>
+        <div class="star-group" id="overallRating">
+          <input type="radio" name="overallRating" id="or5" value="5"><label for="or5">★</label>
+          <input type="radio" name="overallRating" id="or4" value="4"><label for="or4">★</label>
+          <input type="radio" name="overallRating" id="or3" value="3"><label for="or3">★</label>
+          <input type="radio" name="overallRating" id="or2" value="2"><label for="or2">★</label>
+          <input type="radio" name="overallRating" id="or1" value="1"><label for="or1">★</label>
+        </div>
+        <div class="field-error" id="overallRatingErr">Please select a rating.</div>
+      </div>
+
+      <div class="field-group">
+        <label for="standout">In a few words, what stood out to you the most?</label>
+        <textarea id="standout" placeholder="Share what made the biggest impression…"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label for="takeaway">What was the biggest takeaway or learning moment for you?</label>
+        <textarea id="takeaway" placeholder="Describe your key insight or turning point…"></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 3. Structure and Rhythm -->
+    <div class="form-section" id="sec3">
+      <div class="section-label">3 — Structure and Rhythm</div>
+
+      <div class="field-group">
+        <label>How would you rate the structure of the masterclass?
+          <span>Flow, timing, pacing</span>
+        </label>
+        <div class="star-group" id="structureRating">
+          <input type="radio" name="structureRating" id="sr5" value="5"><label for="sr5">★</label>
+          <input type="radio" name="structureRating" id="sr4" value="4"><label for="sr4">★</label>
+          <input type="radio" name="structureRating" id="sr3" value="3"><label for="sr3">★</label>
+          <input type="radio" name="structureRating" id="sr2" value="2"><label for="sr2">★</label>
+          <input type="radio" name="structureRating" id="sr1" value="1"><label for="sr1">★</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Did the sessions feel too long, too short, or just right?</label>
+        <div class="pill-group">
+          <input type="radio" name="sessionLength" id="sl1" value="Too long"><label for="sl1">Too long</label>
+          <input type="radio" name="sessionLength" id="sl2" value="Too short"><label for="sl2">Too short</label>
+          <input type="radio" name="sessionLength" id="sl3" value="Just right"><label for="sl3">Just right</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Were breaks and transitions well-timed?</label>
+        <div class="pill-group">
+          <input type="radio" name="breaks" id="br1" value="Yes"><label for="br1">Yes</label>
+          <input type="radio" name="breaks" id="br2" value="No"><label for="br2">No</label>
+          <input type="radio" name="breaks" id="br3" value="Somewhat"><label for="br3">Somewhat</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="structureSuggestions">Suggestions for improving the structure or rhythm
+          <span>Optional</span>
+        </label>
+        <textarea id="structureSuggestions" placeholder="Any thoughts on pacing, timing, or flow…"></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 4. Mentors and Content -->
+    <div class="form-section" id="sec4">
+      <div class="section-label">4 — Mentors and Content</div>
+
+      <div class="field-group">
+        <label>How would you rate the mentors/facilitators overall?</label>
+        <div class="star-group" id="mentorRating">
+          <input type="radio" name="mentorRating" id="mr5" value="5"><label for="mr5">★</label>
+          <input type="radio" name="mentorRating" id="mr4" value="4"><label for="mr4">★</label>
+          <input type="radio" name="mentorRating" id="mr3" value="3"><label for="mr3">★</label>
+          <input type="radio" name="mentorRating" id="mr2" value="2"><label for="mr2">★</label>
+          <input type="radio" name="mentorRating" id="mr1" value="1"><label for="mr1">★</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Did the mentors provide clear, actionable feedback?</label>
+        <div class="pill-group">
+          <input type="radio" name="mentorFeedback" id="mf1" value="Yes"><label for="mf1">Yes</label>
+          <input type="radio" name="mentorFeedback" id="mf2" value="No"><label for="mf2">No</label>
+          <input type="radio" name="mentorFeedback" id="mf3" value="Sometimes"><label for="mf3">Sometimes</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="mentorImpact">Which mentor(s) had the most impact on you, and why?</label>
+        <textarea id="mentorImpact" placeholder="Tell us about the mentor who resonated most…"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label for="topicsNextTime">Topics or skills you'd like to see covered next time
+          <span>Optional</span>
+        </label>
+        <textarea id="topicsNextTime" placeholder="Any gaps or areas you'd like to explore further…"></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5. Practical Experience -->
+    <div class="form-section" id="sec5">
+      <div class="section-label">5 — Practical Experience</div>
+
+      <div class="field-group">
+        <label>Did you feel you had enough hands-on opportunities?
+          <span>e.g. pitching, script work, peer feedback</span>
+        </label>
+        <div class="pill-group">
+          <input type="radio" name="handsOn" id="ho1" value="Yes"><label for="ho1">Yes</label>
+          <input type="radio" name="handsOn" id="ho2" value="No"><label for="ho2">No</label>
+          <input type="radio" name="handsOn" id="ho3" value="Could be more"><label for="ho3">Could be more</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>How useful was the balance between theory and practice?</label>
+        <div class="pill-group">
+          <input type="radio" name="theoryPractice" id="tp1" value="Too theoretical"><label for="tp1">Too theoretical</label>
+          <input type="radio" name="theoryPractice" id="tp2" value="Just right"><label for="tp2">Just right</label>
+          <input type="radio" name="theoryPractice" id="tp3" value="More practice needed"><label for="tp3">More practice needed</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 6. Environment and Logistics -->
+    <div class="form-section" id="sec6">
+      <div class="section-label">6 — Environment and Logistics</div>
+
+      <div class="field-group">
+        <label>How would you rate the venue/facilities?</label>
+        <div class="star-group" id="venueRating">
+          <input type="radio" name="venueRating" id="vr5" value="5"><label for="vr5">★</label>
+          <input type="radio" name="venueRating" id="vr4" value="4"><label for="vr4">★</label>
+          <input type="radio" name="venueRating" id="vr3" value="3"><label for="vr3">★</label>
+          <input type="radio" name="venueRating" id="vr2" value="2"><label for="vr2">★</label>
+          <input type="radio" name="venueRating" id="vr1" value="1"><label for="vr1">★</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>How was the catering/food experience?</label>
+        <div class="star-group" id="foodRating">
+          <input type="radio" name="foodRating" id="fr5" value="5"><label for="fr5">★</label>
+          <input type="radio" name="foodRating" id="fr4" value="4"><label for="fr4">★</label>
+          <input type="radio" name="foodRating" id="fr3" value="3"><label for="fr3">★</label>
+          <input type="radio" name="foodRating" id="fr2" value="2"><label for="fr2">★</label>
+          <input type="radio" name="foodRating" id="fr1" value="1"><label for="fr1">★</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>How was the atmosphere and networking environment?</label>
+        <div class="star-group" id="atmosphereRating">
+          <input type="radio" name="atmosphereRating" id="ar5" value="5"><label for="ar5">★</label>
+          <input type="radio" name="atmosphereRating" id="ar4" value="4"><label for="ar4">★</label>
+          <input type="radio" name="atmosphereRating" id="ar3" value="3"><label for="ar3">★</label>
+          <input type="radio" name="atmosphereRating" id="ar2" value="2"><label for="ar2">★</label>
+          <input type="radio" name="atmosphereRating" id="ar1" value="1"><label for="ar1">★</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="logisticsSuggestions">Any suggestions for improving the logistics or environment?
+          <span>Optional</span>
+        </label>
+        <textarea id="logisticsSuggestions" placeholder="Venue, catering, scheduling, accommodation…"></textarea>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 7. Overall Impact -->
+    <div class="form-section" id="sec7">
+      <div class="section-label">7 — Overall Impact</div>
+
+      <div class="field-group">
+        <label>Do you feel more confident about pitching your project after this retreat?</label>
+        <div class="pill-group">
+          <input type="radio" name="confidence" id="co1" value="Yes"><label for="co1">Yes</label>
+          <input type="radio" name="confidence" id="co2" value="No"><label for="co2">No</label>
+          <input type="radio" name="confidence" id="co3" value="Somewhat"><label for="co3">Somewhat</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Would you recommend this retreat to others?</label>
+        <div class="pill-group">
+          <input type="radio" name="recommend" id="re1" value="Yes"><label for="re1">Yes</label>
+          <input type="radio" name="recommend" id="re2" value="No"><label for="re2">No</label>
+          <input type="radio" name="recommend" id="re3" value="Maybe"><label for="re3">Maybe</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label for="finalThoughts">Any final thoughts or messages for the organizers?
+          <span>Optional — this is your space</span>
+        </label>
+        <textarea id="finalThoughts" style="min-height:140px;" placeholder="We'd love to hear anything else on your mind…"></textarea>
+      </div>
+    </div>
+
+    <div class="submit-wrap">
+      <button class="submit-btn" id="submitBtn" type="button">Submit Feedback</button>
+    </div>
+
+  </div><!-- /form-wrap -->
+
+  <!-- Success screen -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-mark">✓</div>
+    <h2>Thank you.</h2>
+    <p>Your feedback means a great deal to us.<br>It helps us grow and create better retreats for everyone.</p>
+    <p style="margin-top: 8px;">If you enjoyed your experience, we'd be grateful for a review on TripAdvisor — it takes just 2 minutes and helps us reach more people who need what we offer.</p>
+    <a class="tripadvisor-btn" href="https://www.tripadvisor.com" target="_blank" rel="noopener">Leave a Review</a>
+    <div class="tripadvisor-note">Opens in a new tab</div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  // Scroll reveal
+  const sections = document.querySelectorAll('.form-section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05 });
+  sections.forEach(s => observer.observe(s));
+
+  // Helper
+  function getRadioValue(name) {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    return checked ? checked.value : '';
+  }
+
+  function showError(id, show) {
+    const el = document.getElementById(id);
+    if (show) el.classList.add('show');
+    else el.classList.remove('show');
+  }
+
+  // Submit
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const name     = document.getElementById('participantName').value.trim();
+    const retreat  = document.getElementById('retreat').value;
+    const overall  = getRadioValue('overallRating');
+
+    let valid = true;
+
+    if (!name) { document.getElementById('participantName').classList.add('error'); showError('nameErr', true); valid = false; }
+    else { document.getElementById('participantName').classList.remove('error'); showError('nameErr', false); }
+
+    if (!retreat) { document.getElementById('retreat').classList.add('error'); showError('retreatErr', true); valid = false; }
+    else { document.getElementById('retreat').classList.remove('error'); showError('retreatErr', false); }
+
+    if (!overall) { showError('overallRatingErr', true); valid = false; }
+    else { showError('overallRatingErr', false); }
+
+    if (!valid) { document.querySelector('.field-error.show')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+    const payload = {
+      submittedAt: new Date().toISOString(),
+      participantName: name,
+      retreat,
+
+      // Section 2
+      overallRating: overall,
+      standout: document.getElementById('standout').value.trim(),
+      takeaway: document.getElementById('takeaway').value.trim(),
+
+      // Section 3
+      structureRating: getRadioValue('structureRating'),
+      sessionLength: getRadioValue('sessionLength'),
+      breaks: getRadioValue('breaks'),
+      structureSuggestions: document.getElementById('structureSuggestions').value.trim(),
+
+      // Section 4
+      mentorRating: getRadioValue('mentorRating'),
+      mentorFeedback: getRadioValue('mentorFeedback'),
+      mentorImpact: document.getElementById('mentorImpact').value.trim(),
+      topicsNextTime: document.getElementById('topicsNextTime').value.trim(),
+
+      // Section 5
+      handsOn: getRadioValue('handsOn'),
+      theoryPractice: getRadioValue('theoryPractice'),
+
+      // Section 6
+      venueRating: getRadioValue('venueRating'),
+      foodRating: getRadioValue('foodRating'),
+      atmosphereRating: getRadioValue('atmosphereRating'),
+      logisticsSuggestions: document.getElementById('logisticsSuggestions').value.trim(),
+
+      // Section 7
+      confidence: getRadioValue('confidence'),
+      recommend: getRadioValue('recommend'),
+      finalThoughts: document.getElementById('finalThoughts').value.trim(),
+    };
+
+    try {
+      // ⚠️ Replace with your n8n webhook URL
+      const WEBHOOK_URL = 'YOUR_N8N_FEEDBACK_WEBHOOK_URL_HERE';
+
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      document.getElementById('formWrap').classList.add('hidden');
+      document.getElementById('successScreen').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Feedback';
+      alert('Something went wrong. Please try again or contact us directly.');
+      console.error(err);
+    }
+  });
+</script>
+</body>
+</html>
