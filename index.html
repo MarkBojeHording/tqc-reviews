@@ -620,6 +620,27 @@
       </div>
 
       <div class="field-group">
+        <label>Would you come back to experience another immersive workshop with The Quiet Collective?</label>
+        <div class="pill-group">
+          <input type="radio" name="comeBack" id="cb1" value="Yes"><label for="cb1">Yes</label>
+          <input type="radio" name="comeBack" id="cb2" value="No"><label for="cb2">No</label>
+        </div>
+      </div>
+
+      <div class="field-group" id="workshopTypesGroup" style="display:none;">
+        <label>What kind of immersive workshop would you like to attend next?</label>
+        <div class="pill-group">
+          <input type="checkbox" name="nextWorkshopType" id="wt1" value="Acting"><label for="wt1">Acting</label>
+          <input type="checkbox" name="nextWorkshopType" id="wt2" value="Screenwriting"><label for="wt2">Screenwriting</label>
+          <input type="checkbox" name="nextWorkshopType" id="wt3" value="Creativity"><label for="wt3">Creativity</label>
+          <input type="checkbox" name="nextWorkshopType" id="wt4" value="Mindfulness"><label for="wt4">Mindfulness</label>
+          <input type="checkbox" name="nextWorkshopType" id="wt5" value="Documentary"><label for="wt5">Documentary</label>
+          <input type="checkbox" name="nextWorkshopType" id="wt6" value="Artistic Residencies"><label for="wt6">Artistic Residencies</label>
+          <input type="checkbox" name="nextWorkshopType" id="wt7" value="Digital Detox"><label for="wt7">Digital Detox</label>
+        </div>
+      </div>
+
+      <div class="field-group">
         <label for="finalThoughts">Any final thoughts or messages for the organizers?
           <span>Optional — this is your space</span>
         </label>
@@ -669,6 +690,18 @@
     if (show) el.classList.add('show');
     else el.classList.remove('show');
   }
+
+  // Show follow-up workshop options when "come back" is Yes
+  const workshopTypesGroup = document.getElementById('workshopTypesGroup');
+  document.querySelectorAll('input[name="comeBack"]').forEach(input => {
+    input.addEventListener('change', () => {
+      const showWorkshopTypes = getRadioValue('comeBack') === 'Yes';
+      workshopTypesGroup.style.display = showWorkshopTypes ? 'block' : 'none';
+      if (!showWorkshopTypes) {
+        document.querySelectorAll('input[name="nextWorkshopType"]').forEach(cb => { cb.checked = false; });
+      }
+    });
+  });
 
   // Submit
   document.getElementById('submitBtn').addEventListener('click', async () => {
@@ -728,6 +761,8 @@
       // Section 7
       confidence: getRadioValue('confidence'),
       recommend: getRadioValue('recommend'),
+      comeBack: getRadioValue('comeBack'),
+      nextWorkshopTypes: Array.from(document.querySelectorAll('input[name="nextWorkshopType"]:checked')).map(cb => cb.value),
       finalThoughts: document.getElementById('finalThoughts').value.trim(),
     };
 
